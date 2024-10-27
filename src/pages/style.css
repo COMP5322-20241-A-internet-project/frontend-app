@@ -1,0 +1,6 @@
+
+/*bar chart spacing*/
+div.css-uguv5e-MuiResponsiveChart-container{
+    -webkit-flex-grow: 0;
+    flex-grow: 0;
+}
