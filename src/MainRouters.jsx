@@ -1,7 +1,8 @@
 import React from 'react'
-import Home from './pages/Home.js';
+import Home from './pages/Home'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Dashboard from "./components/Dashboard/Dashboard.js";
+import Dashboard from './components/Dashboard/Dashboard'
+import Food from "./pages/Food"
 
 const MainRouters = () => {
   return (
@@ -10,6 +11,7 @@ const MainRouters = () => {
         <Routes>
         <Route path="/" element={<Navigate to="/home" />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/food" element={<Food/>} />
           <Route path="*" element={<div><h2>404 Page not found</h2></div>}/>
         </Routes>
         </Dashboard>

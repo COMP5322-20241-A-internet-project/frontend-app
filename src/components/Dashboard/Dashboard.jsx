@@ -1,14 +1,16 @@
 import PromoteBar from "./PromoteBar";
 import Header from "./Header";
 import { Box, Grid } from '@mui/material';
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard({ children }) {
+    const navigate = useNavigate()
     return (
         <>
             <Box
                 sx={(theme) => {
                     return {
-                        [theme.breakpoints.up('sm')]: {
+                        [theme.breakpoints.up('md')]: {
                             position: "fixed",
                             top: "0px",
                             right: "0px",
@@ -23,13 +25,14 @@ export default function Dashboard({ children }) {
                 />
                 <Header
                     companyName="Bunny Bunny"
+                    logoClick={() => navigate("/home")}
                 />
             </Box>
             <Box
                 sx={(theme) => {
                     return {
-                        [theme.breakpoints.up('sm')]: {
-                           marginTop:"135px"
+                        [theme.breakpoints.up('md')]: {
+                            marginTop: "140px"
                         },
                     }
                 }}

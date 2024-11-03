@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import zIndex from '@mui/material/styles/zIndex';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ImgFoodNTreat from "../../assets/foodNtreat.jpg"
 import ImgCleanRabbit from "../../assets/cleanRabbit.jpg"
+import { useNavigate } from "react-router-dom";
 
 const styles = {
     menuDiv: {
@@ -24,26 +25,29 @@ const styles = {
         },
         width: "100%",
         cursor: { xs: "pointer", md: "unset" },
+        zIndex:999
     },
     subItemDiv: {
         height: "100vh",
         background: "white",//"blue",
         position: "absolute",
         left: "280px",
-        zIndex: 2,
-        display: { xs: "none", md: "flex" }
+        zIndex: 9999,
+        display: { xs: "none", md: "flex" },
+
 
     },
     subItem: {
         fontSize: "1.2rem",
         padding: "10px 20px",
         minWidth: "280px",
-        cursor:"pointer",
-        '&.index0': {
-            fontSize: "1.4rem",
-            paddingTop: "10px",
-            cursor:"default"
-        },
+        cursor: "pointer"
+    },
+    itemTitle:{
+        minWidth: "280px",
+        fontSize: "1.4rem",
+        padding: "10px 20px",
+        paddingTop: "10px",
     },
     subItemMobile: {
         fontSize: "1.1rem",
@@ -55,21 +59,22 @@ const styles = {
         position: "absolute",
         left: "280px",
         right: 0,
-        opacity: 0.5
+        opacity: 0.5,
+        zIndex:998
     }
 }
 
 const menuData = [
     {
         name: "Food & Treats",
-        subItems: ["Food", "Hay & Grass", "Treats & Chews"],
+        subItems: [{ name: "Food", link: "/food" }, { name: "Hay & Grass", link: "" }, { name: "Treats & Chews", link: "" }],
         image: {
             img: ImgFoodNTreat,
             style: {
-                height:"300px",
-                width:"400px",
-                margin: "20px", 
-                marginRight:"30px"
+                height: "300px",
+                width: "400px",
+                margin: "20px",
+                marginRight: "30px"
             },
             href: "https://bunnylady.com/rabbit-treats/",
             alt: "Rabbit food and treat"
@@ -77,22 +82,22 @@ const menuData = [
     },
     {
         name: "Health & Wellness",
-        subItems: ["Pharmacy", "Grooming & Bathing", "Cleanup & Odor Control"],
+        subItems: [{ name: "Pharmacy", link: "" }, { name: "Grooming & Bathing", link: "" }, { name: "Cleanup & Odor Control", link: "" }],
         image: {
             img: ImgCleanRabbit,
             href: "https://rabbitcareexpert.com/how-to-clean-rabbit-cage/",
             alt: "Rabbit cleaning",
             style: {
-                height:"300px",
-                width:"400px",
-                margin: "20px", 
-                marginRight:"30px"
+                height: "300px",
+                width: "400px",
+                margin: "20px",
+                marginRight: "30px"
             },
         }
     },
     {
         name: "Supplies",
-        subItems: ["Cages & Habitat", "Carriers", "Clothes"]
+        subItems: [{ name: "Cages & Habitat", link: "" }, { name: "Carriers", link: "" }, { name: "Clothes", link: "" }]
     }
 ]
 
@@ -100,6 +105,8 @@ export default function Menu({ setOpenMenu }) {
     const [selectedItem, setSelectedItem] = useState(null);
     const [subItems, setSubItems] = useState({});
     const [selectedSubItemMobile, setSelectedSubItemMobile] = useState([]);
+    const navigate = useNavigate();
+
     return (
         <>
             <Box
@@ -112,7 +119,7 @@ export default function Menu({ setOpenMenu }) {
                         sx={styles.menuItem}
                         key={`${item}-${index}`}
                         onMouseEnter={() => {
-                            setSubItems({...item, subItems: [item.name, ...item.subItems]});
+                            setSubItems(item);
                             setSelectedItem(index)
                         }}
                         onClick={() => setSelectedSubItemMobile((prev) => {
@@ -128,20 +135,21 @@ export default function Menu({ setOpenMenu }) {
                         {/* mobile */}
                         <Box sx={{ display: { md: "none" }, marginTop: "10px" }}>
                             {item.subItems.length > 0 && selectedSubItemMobile === item.name && item.subItems.map((subItem, index) => {
-                                if (index !== 0) {
-                                    return (
-                                        <Box
-                                            sx={styles.subItemMobile}
-                                            key={`${subItem}-${index}`}
-                                            onClick={() => {
-                                                setOpenMenu(false);
-                                                setSelectedSubItemMobile(null)
-                                            }}
-                                        >
-                                            {subItem}
-                                        </Box>
-                                    )
-                                }
+
+                                return (
+                                    <Box
+                                        sx={styles.subItemMobile}
+                                        key={`${subItem.name}-${index}`}
+                                        onClick={() => {
+                                            setOpenMenu(false);
+                                            setSelectedSubItemMobile(null)
+                                            navigate(subItem.link)
+                                        }}
+                                    >
+                                        {subItem.name}
+                                    </Box>
+                                )
+
                             })}
                         </Box>
                     </Box>
@@ -154,14 +162,17 @@ export default function Menu({ setOpenMenu }) {
                 {subItems?.subItems?.length > 0 &&
                     <>
                         <Box sx={{ display: "flex", flexDirection: "column", }}>
+                            <Typography sx={styles.itemTitle}>{subItems.name}</Typography>
                             {subItems.subItems.map((subItem, index) => (
                                 <Box
-                                    className={index === 0 && "index0"}
                                     sx={styles.subItem}
-                                    key={`${subItem}-${index}`}
-                                    onClick={() => index !== 0 && setOpenMenu(false)}
+                                    key={`${subItem.name}-${index}`}
+                                    onClick={() => {
+                                        setOpenMenu(false)
+                                        navigate(subItem.link)
+                                    }}
                                 >
-                                    {subItem}
+                                    {subItem.name}
                                 </Box>
                             ))}
                         </Box>

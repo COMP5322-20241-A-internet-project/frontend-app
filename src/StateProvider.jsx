@@ -1,5 +1,4 @@
 import React, { createContext, useMemo, useState } from 'react';
-import dayjs from 'dayjs';
 
 export const StateContext = createContext(null);
 
@@ -11,8 +10,6 @@ export default function StateProvider({children}) {
     const [allUserOrgReposName, setAllUserOrgRrposName] = useState([])
     const [issuesDataList, setIssueDataList] = useState([]);
     const [userOrgReposCommitsData, setUserOrgReposCommitsData] = useState({});
-    const [projectStartDate, setProjectStartDate] = React.useState(dayjs('2024-02-26T09:30'));
-    const [projectEndDate, setProjectEndDate] = React.useState(dayjs('2024-04-26T23:59'));
     const [selectedMenuIndex, setSelectedMenuIndex] = React.useState(1);
 
     const state = useMemo(() => {
@@ -31,14 +28,10 @@ export default function StateProvider({children}) {
             setIssueDataList: (value) => setIssueDataList(value),
             userOrgReposCommitsData,
             setUserOrgReposCommitsData: (value) => setUserOrgReposCommitsData(value),
-            projectStartDate,
-            setProjectStartDate: (value) => setProjectStartDate(value),
-            projectEndDate,
-            setProjectEndDate: (value) => setProjectEndDate(value),
             selectedMenuIndex,
             setSelectedMenuIndex:(value) => setSelectedMenuIndex(value)
         }
-    }, [userName, gitHubPage, userImgLink, userOrg, allUserOrgReposName, issuesDataList, userOrgReposCommitsData, projectStartDate, projectEndDate, selectedMenuIndex])
+    }, [userName, gitHubPage, userImgLink, userOrg, allUserOrgReposName, issuesDataList, userOrgReposCommitsData, selectedMenuIndex])
 
     return (
         <StateContext.Provider value={state}>

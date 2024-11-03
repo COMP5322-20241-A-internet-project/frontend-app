@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Box, Grid } from '@mui/material';
-import { ReactComponent as RabbitLogo } from "../../assets/rabbit-logo.svg"
+import RabbitLogo from "../../assets/rabbit-logo.svg"
 import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
 import SvgIcon from '@mui/material/SvgIcon';
@@ -24,14 +24,16 @@ const styles = {
         fontSize: { md: "3rem", xs: "2rem" },
         marginLeft: { xs: 0, md: "6px" },
         marginRight: "15px",
-        cursor:"pointer",
+        cursor: "pointer",
     },
     logo: {
         color: "white",
         fontSize: "1.8rem",
         fontWeight: 700,
         display: "flex",
-        alignItems: "center"
+        alignItems: "center",
+        textWrap: "no-wrap",
+        cursor: "pointer"
     },
     rabbit: (theme) => {
         return {
@@ -83,22 +85,22 @@ const styles = {
 };
 
 
-export default function Header({ companyName }) {
+export default function Header({ companyName, logoClick }) {
     const [openMenu, setOpenMenu] = useState(false)
     return (
         <>
             <Grid container sx={styles.headerDiv}>
-                <Grid item={true} md={3} xs={9} sx={{ display: "flex", alignItems: "center", marginBottom: { xs: "12px", md: 0 } }}>
+                <Grid item md={3} xs={9} sx={{ display: "flex", alignItems: "center", marginBottom: { xs: "12px", md: 0 } }}>
                     <MenuIcon
                         sx={styles.menuIcon}
                         onClick={() => setOpenMenu(!openMenu)}
                     />
-                    <Box component="div" sx={styles.logo}>
+                    <Box component="div" sx={styles.logo} onClick={logoClick}>
                         {companyName}
-                        <SvgIcon component={RabbitLogo} inheritViewBox alt="rabbit-logo" sx={styles.rabbit} />
+                        <Box sx={styles.rabbit}>{<img src={RabbitLogo} alt="rabbit-logo" />}</Box>
                     </Box>
                 </Grid>
-                <Grid item={true} md={8} xs={12} sx={{ order: { xs: 3, md: 2 } }} onClick={()=> setOpenMenu(false)}>
+                <Grid item md={8} xs={12} sx={{ order: { xs: 3, md: 2 } }} onClick={() => setOpenMenu(false)}>
                     <Box component="div" sx={styles.search}>
                         <Box component="div" sx={styles.searchIconWrapper}>
                             <SearchIcon />
@@ -110,12 +112,12 @@ export default function Header({ companyName }) {
                         />
                     </Box>
                 </Grid>
-                <Grid item={true} md={1} sx={{ display: "flex", justifyContent: "center", order: { xs: 2, md: 3 }, width: "80px" }} onClick={()=> setOpenMenu(false)}>
+                <Grid item md={1} sx={{ display: "flex", justifyContent: "center", order: { xs: 2, md: 3 }, width: "80px" }} onClick={() => setOpenMenu(false)}>
                     <AccountCircleIcon sx={{ ...styles.generalIcon, marginLeft: { xs: "0px", md: "15px" } }} />
                     <ShoppingCartIcon sx={styles.generalIcon} />
                 </Grid>
             </Grid>
-            {openMenu && <Menu id="menu" setOpenMenu={setOpenMenu}/>}
+            {openMenu && <Menu id="menu" setOpenMenu={setOpenMenu} />}
         </>
     )
 }

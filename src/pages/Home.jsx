@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-
+import Food from "./Food"
 export default function Home() {
-
 
   return (
     <div style={{height:"200vh", background:"white"}}>
+      <Food />
       <div>
         1
       </div>
