@@ -6,18 +6,18 @@ import { priceConstant } from "../constants"
 
 const filterMenu_o = [
     {
-        filterName: "Brand",
+        filterName: "brand",
         filterItems: ["Bunny Natures", "Kaytees", "Sun Seeds"],
         open: false
     },
     {
-        filterName: "Price",
+        filterName: "price",
         filterItems: [priceConstant.under35, priceConstant.between35n70, priceConstant.between71n105, priceConstant.above105],
         open: false
     },
     {
-        filterName: "Lifestage",
-        filterItems: ["Child", "Adult", "Senior"],
+        filterName: "lifestage",
+        filterItems: ["child", "adult", "senior"],
         open: false
     }
 ]
@@ -27,9 +27,9 @@ const styles = {
         display: "flex",
         justifyContent: "space-between",
         padding: "15px 20px",
-        borderTop: "1px solid rgb(204, 204, 204);",
+        borderTop: "1px solid rgb(204, 204, 204)",
         "&:last-child": {
-            borderBottom: "1px solid rgb(204, 204, 204);",
+            borderBottom: "1px solid rgb(204, 204, 204)",
         }
     },
     filterItem: {
@@ -69,13 +69,13 @@ export default function FilterComponent({ sx, handleCheckboxChange }) {
                 {filterMenu.length > 0 && filterMenu.map((item, index) => (
                     <Box key={`${item}-${index}`}>
                         <Grid sx={styles.filterItems} onClick={() => toggleFilterItem(item.filterName)}>
-                            {item.filterName}
+                            {item.filterName.charAt(0).toUpperCase() + item.filterName.slice(1)}
                             <ExpandMoreIcon />
                         </Grid>
                         {item.open && item.filterItems.length > 0 && item.filterItems.map((filterItem, filterItemIndex) => (
                             <Grid key={`${filterItem}-${filterItemIndex}`} sx={styles.filterItem}>
                                 <Checkbox onChange={(e) => onCheckboxChange(e.target.checked, item.filterName, filterItem)} />
-                                {filterItem}
+                                {filterItem.charAt(0).toUpperCase() + filterItem.slice(1)}
                             </Grid>
                         ))}
                     </Box>

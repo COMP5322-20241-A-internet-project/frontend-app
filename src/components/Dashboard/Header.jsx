@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Box, Grid } from '@mui/material';
 import RabbitLogo from "../../assets/rabbit-logo.svg"
 import SearchIcon from '@mui/icons-material/Search';
@@ -16,7 +16,8 @@ const styles = {
             background: theme.palette.primary.main,
             padding: "10px",
             flexGrow: 1,
-            justifyContent: { xs: "space-between" }
+            justifyContent: { xs: "space-between" },
+            ZIndex:9999
         }
     },
     menuIcon: {
@@ -87,6 +88,16 @@ const styles = {
 
 export default function Header({ companyName, logoClick }) {
     const [openMenu, setOpenMenu] = useState(false)
+    const body = document.querySelector('body');
+    useEffect(()=>{
+        if(openMenu && body){
+            
+            body.style.overflowY = 'hidden';
+        } else {
+            body.style.overflowY = 'auto';
+        }
+    },[openMenu])
+
     return (
         <>
             <Grid container sx={styles.headerDiv}>
