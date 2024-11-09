@@ -3,7 +3,7 @@ import { Box, Grid, Checkbox } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { cloneDeep } from "lodash"
 import { priceConstant } from "../constants"
-
+import CheckBox from "./common/CheckBox";
 const filterMenu_o = [
     {
         filterName: "brand",
@@ -33,7 +33,17 @@ const styles = {
         }
     },
     filterItem: {
-        padding: "15px 8px"
+        padding: "15px 8px",
+        display:"flex",
+        alignItems:"center"
+    },
+    resetButton:{
+        width:"100%",
+        marginTop:"15px",
+        background:"#3da193",
+        color:"white",
+        height:"35px",
+        border:"none"
     }
 }
 
@@ -41,6 +51,7 @@ const styles = {
 export default function FilterComponent({ sx, handleCheckboxChange }) {
     const [filterMenu, setFilterMenu] = useState(filterMenu_o)
     const [checkedItem, setCheckedItem] = useState([])
+    const [resetFilter, setResetFilter] = useState(false)
 
     const toggleFilterItem = (filterName) => {
         const foundIndex = filterMenu.findIndex(item => item.filterName === filterName)
@@ -57,12 +68,17 @@ export default function FilterComponent({ sx, handleCheckboxChange }) {
         if (checked) {
             newCheckedItem.push({ filterName, filterItem })
         } else {
-            newCheckedItem = newCheckedItem.filter(item => item.filterName != filterName)
+            newCheckedItem = newCheckedItem.filter(item => item.filterItem !== filterItem)
         }
         setCheckedItem(newCheckedItem)
         handleCheckboxChange && handleCheckboxChange(newCheckedItem)
     }
 
+    const handleReset = () => {
+        setResetFilter(!resetFilter)
+        setCheckedItem([])
+        handleCheckboxChange && handleCheckboxChange([])
+    }
     return (
         <>
             <Box sx={sx}>
@@ -74,12 +90,13 @@ export default function FilterComponent({ sx, handleCheckboxChange }) {
                         </Grid>
                         {item.open && item.filterItems.length > 0 && item.filterItems.map((filterItem, filterItemIndex) => (
                             <Grid key={`${filterItem}-${filterItemIndex}`} sx={styles.filterItem}>
-                                <Checkbox onChange={(e) => onCheckboxChange(e.target.checked, item.filterName, filterItem)} />
+                                    <CheckBox reset={resetFilter} onCheckboxChange={(e) => onCheckboxChange(e.target.checked, item.filterName, filterItem)}/>
                                 {filterItem.charAt(0).toUpperCase() + filterItem.slice(1)}
                             </Grid>
                         ))}
                     </Box>
                 ))}
+                 <button style={styles.resetButton} onClick={handleReset}>Reset</button>
             </Box>
         </>
     )
