@@ -1,0 +1,18 @@
+.alerts {
+    border: 5px #00205b solid;
+    animation: blink 1s;
+    animation-iteration-count: 20;
+    padding: 15px;
+    border-radius: 50px;
+}
+
+@keyframes blink {
+    50% {
+        border-color: #fff;
+    }
+}
+
+.homeContainer {
+    background: url("./src/assets/xmasBg.png");
+    background-attachment: fixed;
+}

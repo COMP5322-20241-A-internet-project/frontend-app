@@ -21,7 +21,7 @@ export default function Dashboard({ children }) {
             >
                 <PromoteBar
                     badgeTitle="Pre-Christmas Sale"
-                    promoteText="15% off | Use code: CHRIS2024"
+                    promoteText="30% off | Use code: CHRIS2024"
                 />
                 <Header
                     companyName="Bunny Bunny"
@@ -32,7 +32,7 @@ export default function Dashboard({ children }) {
                 sx={(theme) => {
                     return {
                         [theme.breakpoints.up('md')]: {
-                            marginTop: "140px"
+                            marginTop: "135px"
                         },
                     }
                 }}

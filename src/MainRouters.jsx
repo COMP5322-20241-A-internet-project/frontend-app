@@ -4,19 +4,25 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Dashboard from './components/Dashboard/Dashboard'
 import Food from "./pages/Food"
 import Product from './pages/Product';
+import SignIn from './pages/SignIn';
+import CreateAccount from './pages/CreateAccount';
+import ShoppingCart from './pages/ShoppingCart';
 
 const MainRouters = () => {
   return (
     <Router>
       <Dashboard>
         <Routes>
-        <Route path="/" element={<Navigate to="/home" />} />
+          <Route path="/" element={<Navigate to="/home" />} />
           <Route path="/home" element={<Home />} />
-          <Route path="/food" element={<Food/>} />
-          <Route path="/product/:id" element={<Product/>}/>
-          <Route path="*" element={<div><h2>404 Page not found</h2></div>}/>
+          <Route path="/food" element={<Food />} />
+          <Route path="/product/:id" element={<Product />} />
+          <Route path="/signIn" element={<SignIn />} />
+          <Route path="/createAccount" element={<CreateAccount />} />
+          <Route path="/shoppingCart" element={<ShoppingCart />} />
+          <Route path="*" element={<div><h2>404 Page not found</h2></div>} />
         </Routes>
-        </Dashboard>
+      </Dashboard>
     </Router>
   )
 }

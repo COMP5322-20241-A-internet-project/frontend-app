@@ -60,13 +60,13 @@ const styles = {
         marginTop: "15px",
         height: "50px"
     },
-    addToFavBtn:{
+    addToFavBtn: {
         width: "100%",
         cursor: "pointer",
         marginTop: "15px",
         height: "50px",
         background: "rgb(185, 211, 243)",
-        border:"none",
+        border: "none",
         color: "#00205b",
     },
     submitBtn: (theme) => {
@@ -74,13 +74,19 @@ const styles = {
             background: theme.palette.primary.main,
             border: "none",
             color: "white",
-            marginTop:"20px",
-            width:"150px",
-            height:"50px",
-            display:"flex",
-            justifyContent:"center",
-            alignItems:"center"
+            marginTop: "20px",
+            width: "150px",
+            height: "50px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
         }
+    },
+    reviewsTextarea: {
+        resize: "none",
+        width: "100%",
+        border: "1px solid #00205b",
+        height: "100px"
     }
 }
 
@@ -124,15 +130,12 @@ export default function Product() {
                                 <Box><Typography variant="body1" gutterBottom>{item.comment}</Typography></Box>
                             </Box>
                         ))}
-                        <TextField
-                            placeholder="Type in reviews"
-                            multiline
-                            rows={2}
-                            maxRows={4}
-                            sx={(theme)=> {return { width: "100%", "& .MuiOutlinedInput-root":`1px solid ${theme.palette.primary.main}` }}}
+                        <textarea
+                            placeholder="Type in reviews here..."
+                            style={styles.reviewsTextarea}
                         />
                         <Box sx={styles.submitBtn}>
-                            <button style={{ border: "none", background: "none", color:"white" }}>Submit</button>
+                            <button style={{ border: "none", background: "none", color: "white" }}>Submit</button>
                         </Box>
 
                     </Box>

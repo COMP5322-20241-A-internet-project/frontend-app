@@ -8,6 +8,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Menu from "./Menu"
+import AccountMenu from './AccountMenu';
+import { useNavigate } from "react-router-dom";
 
 const styles = {
     headerDiv: (theme) => {
@@ -81,13 +83,16 @@ const styles = {
     generalIcon: {
         color: "white",
         fontSize: "2rem",
-        marginLeft: "15px"
+        marginLeft: "15px",
+        cursor:"pointer"
     }
 };
 
 
 export default function Header({ companyName, logoClick }) {
+    const navigate = useNavigate()
     const [openMenu, setOpenMenu] = useState(false)
+    const [openAccountMenu, setOpenAccountMenu] = useState(false)
     const body = document.querySelector('body');
     useEffect(()=>{
         if(openMenu && body){
@@ -98,6 +103,7 @@ export default function Header({ companyName, logoClick }) {
         }
     },[openMenu])
 
+    console.log("openAccountMenu", openAccountMenu)
     return (
         <>
             <Grid container sx={styles.headerDiv}>
@@ -124,10 +130,11 @@ export default function Header({ companyName, logoClick }) {
                     </Box>
                 </Grid>
                 <Grid item md={1} sx={{ display: "flex", justifyContent: "center", order: { xs: 2, md: 3 }, width: "80px" }} onClick={() => setOpenMenu(false)}>
-                    <AccountCircleIcon sx={{ ...styles.generalIcon, marginLeft: { xs: "0px", md: "15px" } }} />
-                    <ShoppingCartIcon sx={styles.generalIcon} />
+                    <AccountCircleIcon sx={{ ...styles.generalIcon, marginLeft: { xs: "0px", md: "15px" } }} onClick={()=>{setOpenAccountMenu(!openAccountMenu)}}/>
+                    <ShoppingCartIcon sx={styles.generalIcon} onClick={()=>navigate("/shoppingCart")}/>
                 </Grid>
             </Grid>
+            {openAccountMenu && <AccountMenu setOpenAccountMenu={setOpenAccountMenu}/>}
             {openMenu && <Menu id="menu" setOpenMenu={setOpenMenu} />}
         </>
     )
