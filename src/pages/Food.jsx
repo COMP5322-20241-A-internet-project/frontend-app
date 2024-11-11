@@ -18,7 +18,7 @@ const foodItems = [
         weight: "2.5 LBS",
         description: "This food loaded with natural goodness for rabbit;- Made in the USA;- No artificial colors or preservatives;- Enriched with DHA as well as digestive probiotics;- Contains fruits, vegetables, wholesome seeds, grains, nuts, legumes and much more",
         ingredients: "Pumpkin Seeds, Coconut, Raisins, White Millet, Oats, Sun-Cured Timothy Hay, Wheat Millet, Pyridoxine Hydrochloride, Riboflavin Supplement, Zinc Proteinate, Manganese Proteinate, Copper Proteinate, Calcium Iodate, Yucca Schidigera Extract, Sodium Selenite, Cobalt Carbonate, Vitamin B12 Supplement.",
-        reviews: [{ id: 1, username: "Mandy", comment: "it is nice!!!", date: "2015-03-25T12:00:00-06:30"}, { id: 2, username: "Michael", comment: "I will buy it again", date: "2015-03-25T12:00:00-06:30" }]
+        reviews: [{ id: 1, username: "Mandy", comment: "it is nice!!!", date: "2015-03-25T12:00:00-06:30" }, { id: 2, username: "Michael", comment: "I will buy it again", date: "2015-03-25T12:00:00-06:30" }]
 
     },
     {
@@ -202,6 +202,23 @@ export default function Food() {
         return filterItems.length > 0 ? newItemList : itemList
     }
 
+    function addtoCart(item){
+        let bunnybunnycart = localStorage.getItem("bunnybunnycart")
+        if(!bunnybunnycart){
+            localStorage.setItem("bunnybunnycart", JSON.stringify([{...item, quantity: 1}]))
+        } else {
+            bunnybunnycart = JSON.parse(localStorage.getItem("bunnybunnycart"))
+            const foundIndex = bunnybunnycart.findIndex(cartItem=>cartItem.id === item.id)
+            if(foundIndex > -1){
+                bunnybunnycart[foundIndex].quantity = ++bunnybunnycart[foundIndex].quantity
+            } else {
+                bunnybunnycart.push({...item, quantity:1})
+            }
+            
+            localStorage.setItem("bunnybunnycart", JSON.stringify(bunnybunnycart))
+        }
+    }
+
     return (
         <Box sx={styles.container}>
             <Breadcrumb breadcrumbsContent={breadcrumbs} />
@@ -240,7 +257,18 @@ export default function Food() {
                                         <Typography sx={{ marginBottom: "5px" }}>{item.title}</Typography>
                                         <Typography sx={{ marginBottom: "5px" }}>{`HKD ${item.price}`}</Typography>
                                     </Box>
-                                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation() }} style={styles.addToCartButton}>Add to Cart</button>
+                                    <button onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        addtoCart({
+                                            id: item.id,
+                                            title: item.title,
+                                            category: item.category,
+                                            price: item.price,
+                                            brand: item.brand,
+                                            img: item.img
+                                        });
+                                    }} style={styles.addToCartButton}>Add to Cart</button>
                                     <button style={styles.addToFavButton}>Add to Favourite</button>
                                 </Box>
                             </Grid>

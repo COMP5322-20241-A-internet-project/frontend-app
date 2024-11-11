@@ -11,7 +11,6 @@ const styles = {
         return {
             display: "flex",
             justifyContent: "center",
-            alignItems: "center",
             flexDirection: "column",
             [theme.breakpoints.down('md')]: {
                 width: "unset",
@@ -99,15 +98,17 @@ export default function Product() {
             <Grid container sx={{ maxWidth: "1800px" }}>
                 <Grid item md={12} lg={12}><Breadcrumb breadcrumbsContent={breadcrumbs} /></Grid>
                 <Grid item md={8} xs={12} sx={styles.productDiv} order={{ md: 2, sm: 3 }}>
-                    <Box sx={{
-                        width: "400px", height: "450px",
-                        display: { md: "block", sm: "none" },
-                        "&.MuiBox-root": {
-                            backgroundImage: `url(/src/assets/products/${state.img})`, backgroundSize: "contain",
-                            backgroundRepeat: "no-repeat",
-                            backgroundPosition: "center"
-                        }
-                    }}>
+                    <Box style={{width:"100%", display:"flex", justifyContent:"center"}}>
+                        <Box sx={{
+                            width: "400px", height: "450px",
+                            display: { md: "block", sm: "none" },
+                            "&.MuiBox-root": {
+                                backgroundImage: `url(/src/assets/products/${state.img})`, backgroundSize: "contain",
+                                backgroundRepeat: "no-repeat",
+                                backgroundPosition: "center"
+                            }
+                        }}>
+                        </Box>
                     </Box>
                     <Box>
                         <Box sx={{ marginBottom: "20px" }}>
