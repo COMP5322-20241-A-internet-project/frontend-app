@@ -3,6 +3,8 @@ import { useState, useRef, useEffect } from 'react'
 import { Box, Grid, Typography, Button, TextField } from '@mui/material'
 import Breadcrumb from "../components/Breadcrumb"
 import { cloneDeep } from "lodash"
+import { useNavigate } from "react-router-dom";
+import { CreditCard } from "@mui/icons-material";
 
 export const breadcrumbs = [
     <Typography key="1" sx={{ color: 'black', fontSize: "1rem" }}>
@@ -12,13 +14,13 @@ export const breadcrumbs = [
 
 const styles = {
     container: {
-        padding: "30px"
+        padding: { md: "30px", xs: 0 },
+        paddingBottom: { xs: "50px" }
     },
     productDiv: (theme) => {
         return {
             display: "flex",
-            flexDirection: "column",
-            padding: "15px"
+            flexDirection: "column"
         }
     },
     specificationBox: {
@@ -60,12 +62,42 @@ const styles = {
             justifyContent: "center",
             alignItems: "center"
         }
+    },
+    startShoppingBtn: {
+        background: "#00205b",
+        color: "white",
+        height: "50px",
+        width: "270px",
+        marginTop: "20px",
+        cursor: "pointer"
     }
 }
 
 export default function ShoppingCart() {
+    const navigate = useNavigate()
     const [geoAddress, setGeoAddress] = useState("")
     const [cartItems, setCartItem] = useState([])
+    const [totalPrice, setTotalPrice] = useState(0)
+    const [firstname, setFirstname] = useState("")
+    const [lastname, setLastname] = useState("")
+    const [address1, setAddress1] = useState("")
+    const [address2, setAddress2] = useState("")
+    const [nameOnCreditCard, setNameOnCreditCard] = useState("")
+    const [creditCardNum, setCreditCardNum] = useState("")
+    const [expiryMonth, setExpiryMonth] = useState("")
+    const [expiryYear, setExpiryYear] = useState("")
+    const [cvc, setCvc] = useState(null)
+    const [error, setError] = useState({})
+    console.log("firstname", firstname)
+    console.log("lastname", lastname)
+    console.log("address1", address1)
+    console.log("address2", address2)
+    console.log("nameOnCreditCard", nameOnCreditCard)
+    console.log("creditCardNum", creditCardNum)
+    console.log("expiryMonth", expiryMonth)
+    console.log("expiryYear", expiryYear)
+    console.log("cvc", cvc)
+
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
 
@@ -85,11 +117,20 @@ export default function ShoppingCart() {
 
     useEffect(() => {
         const bunnybunnycart = JSON.parse(localStorage.getItem("bunnybunnycart"))
-        setCartItem(bunnybunnycart)
+        if (bunnybunnycart) {
+            setCartItem(bunnybunnycart)
+            const total = bunnybunnycart.reduce((prev, curr) => {
+                if (curr.quantity === 0 || curr.quantity === "" || curr.quantity == null || curr.quantity === undefined) {
+                    return totalPrice
+                }
+                return prev += parseFloat(curr.price) * parseFloat(curr.quantity)
+            }, 0)
+            setTotalPrice(total)
+        }
     }, [])
 
     function changeQuantity(value, id) {
-        if (value < 1) return
+        setError({ ...error, cart: null })
         const newCartItems = cloneDeep(cartItems)
         for (const item of newCartItems) {
             if (item.id === id) {
@@ -99,18 +140,111 @@ export default function ShoppingCart() {
         setCartItem(newCartItems)
     }
 
+    function handleDelete(id) {
+        setError({ ...error, cart: null })
+        const filteredCartItem = cartItems.filter(item => item.id !== id)
+        setCartItem(filteredCartItem)
+        localStorage.setItem("bunnybunnycart", JSON.stringify(filteredCartItem))
+    }
+
+    function handleUpdateCart() {
+        const foundNullQuantity = cartItems.filter(item => item.quantity === "" || item.quantity == null)
+
+        if (foundNullQuantity.length > 0) {
+            setError({ cart: "Cannot update as it contains items with 0 quantity" })
+        } else {
+            setError({ ...error, cart: null })
+            const total = cartItems.reduce((prev, curr) => {
+                return prev += parseFloat(curr.price) * parseFloat(curr.quantity)
+            }, 0)
+            setTotalPrice(total)
+
+            localStorage.setItem("bunnybunnycart", JSON.stringify(cartItems))
+        }
+    }
+
+    function validateCreditCard(cardNumber) {
+
+        cardNumber = cardNumber.replace(/\D/g, '');
+
+        if (cardNumber.length < 13 || cardNumber.length > 19) {
+            return false;
+        }
+
+        let sum = 0;
+        let alternate = false;
+
+        for (let i = cardNumber.length - 1; i >= 0; i--) {
+            let n = parseInt(cardNumber.charAt(i), 10);
+
+            if (alternate) {
+                n *= 2;
+                if (n > 9) {
+                    n -= 9;
+                }
+            }
+
+            sum += n;
+            alternate = !alternate;
+        }
+        return (sum % 10 === 0);
+    }
+
+    function validateForm() {
+        let newError = error
+        if (!validateCreditCard(creditCardNum)) {
+            newError = { ...newError, creditCardNum: "error" }
+        }
+        if (!firstname) {
+            newError = { ...newError, firstname: "error" }
+        }
+        if (!lastname) {
+            newError = { ...newError, lastname: "error" }
+        }
+        if (!address1) {
+            newError = { ...newError, address1: "error" }
+        }
+        if (!nameOnCreditCard) {
+            newError = { ...newError, nameOnCreditCard: "error" }
+        }
+        if (!creditCardNum) {
+            newError = { ...newError, creditCardNum: "error" }
+        }
+        if (!expiryMonth) {
+            newError = { ...newError, expiryMonth: "error" }
+        }
+        if (!expiryYear) {
+            newError = { ...newError, expiryYear: "error" }
+        }
+        if (!cvc) {
+            newError = { ...newError, cvc: "error" }
+        }
+        setError(newError)
+    }
+
     return (
         <Box sx={styles.container}>
             <Grid container>
                 {/* <Grid item md={12} lg={12}><Breadcrumb breadcrumbsContent={breadcrumbs} /></Grid> */}
 
-                {(!cartItems || cartItems.length === 0) ? <div style={{ height: "78vh", width: "100%", display: "flex", justifyContent: "center", alignItems: "center", background: "#D3D3D3" }}>
-                    No Items
-                </div> :
-                    <Grid item xs={12} md={12} lg={12} sx={{ display: "flex", justifyContent: "center", flexDirection: "row", maxWidth: "1800px", flexDirection: { xs:"column", md: "column", lg: "row" } }}>
+                {(!cartItems || cartItems.length === 0) ?
+                    <div style={{ height: "78vh", width: "100%", display: "flex", justifyContent: "center", alignItems: "center", background: "#eceaea", flexDirection: "column" }}>
+                        <Typography variant="h5">Shopping Cart is empty</Typography>
+                        <button
+                            style={styles.startShoppingBtn}
+                            onClick={() => navigate("/home")}
+                        >
+                            Start Shopping
+                        </button>
+
+                    </div> :
+                    <Grid item xs={12} md={12} lg={12} sx={{ display: "flex", justifyContent: "center", flexDirection: "row", maxWidth: "1800px", flexDirection: { xs: "column", md: "column", lg: "row" } }}>
                         <Grid item lg={4} md={12} xs={12} sx={styles.productDiv}>
-                            <Typography variant="h5" gutterBottom>Items</Typography>
-                            <div style={{ overflowY: "scroll", height: "60vh" }}>
+                            <Box style={{ display: "flex", alignItems: "center" }}>
+                                <Typography variant="h5" gutterBottom>Items</Typography>
+                                <Typography style={{ color: "red", fontSize: "1rem", marginLeft:"20px" }} gutterBottom>{error.cart}</Typography>
+                            </Box>
+                            <div style={{ overflowY: "scroll", height: "508px" }}>
                                 {cartItems?.length > 0 && cartItems.map((cartItem, index) => (
                                     <div style={{ display: "flex", marginRight: "15px" }}>
                                         <Box sx={{
@@ -126,20 +260,171 @@ export default function ShoppingCart() {
                                             <Typography sx={{ fontWeight: "bold" }} gutterBottom>{cartItem.brand}</Typography>
                                             <Typography gutterBottom>{cartItem.title}</Typography>
                                             <Typography gutterBottom>{`HKD ${cartItem.price}`}</Typography>
-                                            <Typography gutterBottom>{`Quantity: `}<input type="number" style={{ width: "80px" }} value={cartItem.quantity} onChange={(e) => changeQuantity(e.target.value, cartItem.id)} /></Typography>
-                                            <button style={{ background: "#de0a26", color: "white", border: 0, height: "35px", cursor: "pointer" }}>Delete</button>
+                                            <Typography gutterBottom>{`Quantity: `}<input type="number" style={{ width: "80px" }} value={cartItem.quantity}
+                                                onKeyDown={(evt) => (evt.key === 'e' || evt.key === '-') && evt.preventDefault()}
+                                                onChange={(e) => {
+                                                    const valueString = e.target.value.toString()
+                                                    if (valueString.length === 1 && valueString === "0") return
+                                                    changeQuantity(e.target.value, cartItem.id)
+                                                }} /></Typography>
+                                            <button
+                                                style={{ background: "#de0a26", color: "white", border: 0, height: "35px", cursor: "pointer" }}
+                                                onClick={() => handleDelete(cartItem.id)}
+                                            >
+                                                Delete
+                                            </button>
                                         </Box>
                                     </div>
                                 ))}
                             </div>
-                            <button style={{ marginTop: "20px", background: "#00205b", color: "white", height: "50px", width: "100%", cursor: "pointer" }}>Update Cart</button>
+                            <button
+                                style={{ marginTop: "20px", background: "#00205b", color: "white", height: "50px", width: "100%", cursor: "pointer" }}
+                                onClick={() => handleUpdateCart()}
+                            >
+                                Update Cart
+                            </button>
                         </Grid>
                         <Grid item lg={4} md={12} xs={12}>
-                            <Box>
-                                <Typography variant="h5" gutterBottom>Specifications</Typography>
-
-
-
+                            <Box></Box>
+                            <Box style={{ marginLeft: "10px" }}>
+                                <Typography variant="h5" gutterBottom>{`Order Total: HKD ${totalPrice}`}</Typography>
+                                <Typography variant="h6" style={{ marginBottom: "8px" }}>Delivery Infoamtion</Typography>
+                                <Box style={{ border: "1px solid black", padding: "15px", background: "#b9d3f3" }}>
+                                    <Box style={{ display: "flex", justifyContent: "space-between" }}>
+                                        <Box style={{ display: "flex", flexDirection: "column", width: "49%" }}>
+                                            <label for="firstname">First Name</label>
+                                            <input
+                                                style={error.firstname && { border: "2px solid red" }}
+                                                type="text"
+                                                value={firstname}
+                                                onChange={(e) => { setError({ ...error, firstname: null }); setFirstname(e.target.value.trim()) }}
+                                            />
+                                        </Box>
+                                        <Box style={{ display: "flex", flexDirection: "column", width: "49%" }}>
+                                            <label for="lastname">Last Name</label>
+                                            <input
+                                                style={error.lastname && { border: "2px solid red" }}
+                                                type="text"
+                                                value={lastname}
+                                                onChange={(e) => { setError({ ...error, lastname: null }); setLastname(e.target.value.trim()) }}
+                                            />
+                                        </Box>
+                                    </Box>
+                                    <Box>
+                                        <Box style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>
+                                            <label for="address1">Address</label>
+                                            <input
+                                                style={error.address1 && { border: "2px solid red" }}
+                                                type="text"
+                                                value={address1}
+                                                onChange={(e) => { setError({ ...error, address1: null }); setAddress1(e.target.value.trim()) }}
+                                            />
+                                        </Box>
+                                        <Box style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>
+                                            <label for="address2"></label>
+                                            <input
+                                                type="text"
+                                                value={address2}
+                                                onChange={(e) => setAddress2(e.target.value.trim())}
+                                            />
+                                        </Box>
+                                    </Box>
+                                </Box>
+                                <Typography variant="h6" style={{ marginBottom: "10px", marginTop: "3px" }}>Credit Card Infoamtion</Typography>
+                                <Box style={{ border: "1px solid black", padding: "15px", background: "#b9d3f3" }}>
+                                    <Box>
+                                        <Box style={{ display: "flex", flexDirection: "column" }}>
+                                            <label for="creditCard">Name on Credit Card</label>
+                                            <input
+                                                style={error.nameOnCreditCard && { border: "2px solid red" }}
+                                                type="text"
+                                                value={nameOnCreditCard}
+                                                onChange={(e) => { setError({ ...error, nameOnCreditCard: null }); setNameOnCreditCard(e.target.value) }}
+                                            />
+                                        </Box>
+                                        <Box style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>
+                                            <label for="creditCard">Credit Card</label>
+                                            <input
+                                                style={error.creditCardNum && { border: "2px solid red" }}
+                                                type="number"
+                                                value={creditCardNum}
+                                                onKeyDown={(evt) => (evt.key === 'e' || evt.key === '-') && evt.preventDefault()}
+                                                onChange={(e) => { setError({ ...error, creditCardNum: null }); setCreditCardNum(e.target.value); }} />
+                                        </Box>
+                                        <Box style={{ display: "flex" }}>
+                                            <Box style={{ display: "flex", flexDirection: "column", marginTop: "20px", marginRight: "3px" }}>
+                                                <label for="creditCard">Expiry Date</label>
+                                                <Box style={{ display: "flex" }}>
+                                                    <input
+                                                        style={{ width: "40px", marginRight: "5px", border: error.expiryMonth && "2px solid red" }}
+                                                        type="number"
+                                                        value={expiryMonth}
+                                                        min={1}
+                                                        max={12}
+                                                        onKeyDown={(evt) => (evt.key === 'e' || evt.key === '-') && evt.preventDefault()}
+                                                        onChange={(e) => {
+                                                            setError({ ...error, expiryMonth: null })
+                                                            const valueString = e.target.value.toString()
+                                                            if (valueString.length > 2) {
+                                                                return
+                                                            } else if (valueString.length === 2 && valueString.startsWith("0") && valueString.endsWith("0")) {
+                                                                return
+                                                            } else if (e.target.value > 12) {
+                                                                return
+                                                            }
+                                                            setExpiryMonth(e.target.value)
+                                                        }}
+                                                    />{`/ `}
+                                                    <input
+                                                        style={{ width: "40px", marginLeft: "5px", border: error.expiryYear && "2px solid red" }}
+                                                        type="number"
+                                                        value={expiryYear}
+                                                        onKeyDown={(evt) => (evt.key === 'e' || evt.key === '-') && evt.preventDefault()}
+                                                        onChange={(e) => {
+                                                            setError({ ...error, expiryYear: null })
+                                                            const valueString = e.target.value.toString()
+                                                            if (valueString.length > 2) {
+                                                                return
+                                                            } else if (valueString.length > 1 && e.target.value < 24 || valueString.length > 1 && e.target.value > 29) {
+                                                                return
+                                                            }
+                                                            setExpiryYear(e.target.value)
+                                                        }}
+                                                    />
+                                                </Box>
+                                            </Box>
+                                            <Box style={{ display: "flex", flexDirection: "column", marginTop: "20px", marginLeft: "20px" }}>
+                                                <label for="creditCard">CVC</label>
+                                                <Box style={{ display: "flex" }}>
+                                                    <input
+                                                        style={{ width: "40px", border: error.cvc && "2px solid red" }}
+                                                        type="number"
+                                                        value={cvc}
+                                                        max={999}
+                                                        onKeyDown={(evt) => (evt.key === 'e' || evt.key === '-') && evt.preventDefault()}
+                                                        onChange={(e) => {
+                                                            setError({ ...error, cvc: null })
+                                                            const valueString = e.target.value.toString()
+                                                            if (valueString.length > 3) {
+                                                                return
+                                                            }
+                                                            setCvc(e.target.value)
+                                                        }}
+                                                    />
+                                                </Box>
+                                            </Box>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                                <button
+                                    style={{ marginTop: "6px", background: "#00205b", color: "white", height: "50px", width: "100%", cursor: "pointer" }}
+                                    onClick={() => {
+                                        setError({})
+                                        validateForm()
+                                    }}
+                                >
+                                    Submit
+                                </button>
                             </Box>
                         </Grid>
                     </Grid>}
