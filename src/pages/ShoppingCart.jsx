@@ -231,12 +231,9 @@ export default function ShoppingCart() {
     }
 
     function handleSubmit(){
-        console.log("suubmit")
         const validated = validateForm()
-        console.log("validated", validated)
         if(validated){
             const jwtToken = localStorage.getItem("jwtToken")
-            console.log("jwtToken", jwtToken)
             if(!jwtToken){
                 localStorage.setItem("orderInfo", JSON.stringify({
                     firstname,
@@ -267,10 +264,8 @@ export default function ShoppingCart() {
     useEffect(()=>{
         if(location.state === locationStateConstant.returnFromSignIn){
             let orderInfo = localStorage.getItem("orderInfo")
-            console.log("orderInfo",orderInfo)
             if(orderInfo){
                 orderInfo = JSON.parse(orderInfo)
-                console.log("orderInfo", orderInfo)
                 setFirstname(orderInfo.firstname)
                 setLastname(orderInfo.lastname)
                 setAddress1(orderInfo.address1)

@@ -92,7 +92,6 @@ const styles = {
 export default function Product() {
     const { state } = useLocation()
     const reviewsRef = useRef(null)
-    console.log("state ", state)
     return (
         <Box sx={styles.container}>
             <Grid container sx={{ maxWidth: "1800px" }}>

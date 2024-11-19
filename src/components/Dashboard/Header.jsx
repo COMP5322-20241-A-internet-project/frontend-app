@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Box, Grid } from '@mui/material';
 import RabbitLogo from "../../assets/rabbit-logo.svg"
 import SearchIcon from '@mui/icons-material/Search';
@@ -10,6 +10,8 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Menu from "./Menu"
 import AccountMenu from './AccountMenu';
 import { useNavigate } from "react-router-dom";
+import { StateContext } from '../../StateProvider';
+import { decodeJwt } from '../../utils/utils';
 
 const styles = {
     headerDiv: (theme) => {
@@ -19,7 +21,7 @@ const styles = {
             padding: "10px",
             flexGrow: 1,
             justifyContent: { xs: "space-between" },
-            ZIndex:9999
+            ZIndex: 9999
         }
     },
     menuIcon: {
@@ -84,7 +86,7 @@ const styles = {
         color: "white",
         fontSize: "2rem",
         marginLeft: "15px",
-        cursor:"pointer"
+        cursor: "pointer"
     }
 };
 
@@ -94,16 +96,25 @@ export default function Header({ companyName, logoClick }) {
     const [openMenu, setOpenMenu] = useState(false)
     const [openAccountMenu, setOpenAccountMenu] = useState(false)
     const body = document.querySelector('body');
-    useEffect(()=>{
-        if(openMenu && body){
-            
+    const { setUserName } = useContext(StateContext)
+    useEffect(() => {
+        if (openMenu && body) {
+
             body.style.overflowY = 'hidden';
         } else {
             body.style.overflowY = 'auto';
         }
-    },[openMenu])
+    }, [openMenu])
 
-    console.log("openAccountMenu", openAccountMenu)
+    useEffect(() => {
+        const jwtToken = localStorage.getItem("jwtToken")
+        if (jwtToken) {
+            const result = decodeJwt(jwtToken)
+            if (result) {
+                setUserName(result.username)
+            }
+        }
+    }, [])
     return (
         <>
             <Grid container sx={styles.headerDiv}>
@@ -130,11 +141,11 @@ export default function Header({ companyName, logoClick }) {
                     </Box>
                 </Grid>
                 <Grid item md={1} sx={{ display: "flex", justifyContent: "center", order: { xs: 2, md: 3 }, width: "80px" }} onClick={() => setOpenMenu(false)}>
-                    <AccountCircleIcon sx={{ ...styles.generalIcon, marginLeft: { xs: "0px", md: "15px" } }} onClick={()=>{setOpenAccountMenu(!openAccountMenu)}}/>
-                    <ShoppingCartIcon sx={styles.generalIcon} onClick={()=>navigate("/shoppingCart")}/>
+                    <AccountCircleIcon sx={{ ...styles.generalIcon, marginLeft: { xs: "0px", md: "15px" } }} onClick={() => { setOpenAccountMenu(!openAccountMenu) }} />
+                    <ShoppingCartIcon sx={styles.generalIcon} onClick={() => navigate("/shoppingCart")} />
                 </Grid>
             </Grid>
-            {openAccountMenu && <AccountMenu setOpenAccountMenu={setOpenAccountMenu}/>}
+            {openAccountMenu && <AccountMenu setOpenAccountMenu={setOpenAccountMenu} />}
             {openMenu && <Menu id="menu" setOpenMenu={setOpenMenu} />}
         </>
     )

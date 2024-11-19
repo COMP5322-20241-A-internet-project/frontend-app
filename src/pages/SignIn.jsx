@@ -20,7 +20,7 @@ const styles = {
         color: "white"
     }
 }
-console.log("window.history.state", window.history.state)
+
 export default function SignIn() {
     const [username, setUsername] = useState()
     const [password, setPassword] = useState()

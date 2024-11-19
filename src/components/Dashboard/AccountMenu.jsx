@@ -44,21 +44,12 @@ export default function AccountMenu({ setOpenAccountMenu }) {
     const navigate = useNavigate()
     const [loginName, setLoginName] = useState()
     const { userName } = useContext(StateContext)
-    useEffect(()=>{
-        const jwtToken = localStorage.getItem("jwtToken")
-        if(jwtToken){
-            const result = decodeJwt(jwtToken)
-            if(result){
-                setLoginName(result.username)
-            }
-        }
-    },[])
-    useEffect(()=>{
+    useEffect(() => {
         setLoginName(userName)
-    },[userName])
+    }, [userName])
     return (
         <Box sx={styles.accountMenuPopup}>
-            {loginName && <Typography variant='h5' style={{marginBottom:"10px"}}>{`Hi, ${loginName}`}</Typography>}
+            {loginName && <Typography variant='h5' style={{ marginBottom: "10px" }}>{`Hi, ${loginName}`}</Typography>}
             <button style={styles.signInBtn} onClick={() => { setOpenAccountMenu(false); navigate("/signIn"); }}>Sign in </button>
             <button style={styles.createAccountBtn} onClick={() => { setOpenAccountMenu(false); navigate("/createAccount"); }}>Create Account</button>
         </Box>
