@@ -6,6 +6,7 @@ import Product from './pages/Product';
 import SignIn from './pages/SignIn';
 import CreateAccount from './pages/CreateAccount';
 import ShoppingCart from './pages/ShoppingCart';
+import FinishOrder from './pages/FinishOrder';
 
 const MainRouters = () => {
   return (
@@ -19,6 +20,7 @@ const MainRouters = () => {
           <Route path="/signIn" element={<SignIn />} />
           <Route path="/createAccount" element={<CreateAccount />} />
           <Route path="/shoppingCart" element={<ShoppingCart />} />
+          <Route path="/finishOrder" element={<FinishOrder />} />
           <Route path="*" element={<div><h2>404 Page not found</h2></div>} />
         </Routes>
       </Dashboard>

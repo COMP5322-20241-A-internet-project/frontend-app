@@ -168,28 +168,28 @@ export default function Food() {
                 const arr = []
                 if (filterItem.filterItems.includes(priceConstant.under35)) {
                     newItemList.forEach(itemListItem => {
-                        if (parseInt(itemListItem.price) < 35) {
+                        if (parseFloat(itemListItem.price) < 35) {
                             arr.push(itemListItem)
                         }
                     })
                 }
                 if (filterItem.filterItems.includes(priceConstant.between35n70)) {
                     newItemList.forEach(itemListItem => {
-                        if (parseInt(itemListItem.price) >= 35 && parseInt(itemListItem.price) <= 70) {
+                        if (parseFloat(itemListItem.price) >= 35 && parseFloat(itemListItem.price) <= 70) {
                             arr.push(itemListItem)
                         }
                     })
                 }
                 if (filterItem.filterItems.includes(priceConstant.between71n105)) {
                     newItemList.forEach(itemListItem => {
-                        if (parseInt(itemListItem.price) >= 71 && parseInt(itemListItem.price) <= 105) {
+                        if (parseFloat(itemListItem.price) >= 71 && parseFloat(itemListItem.price) <= 105) {
                             arr.push(itemListItem)
                         }
                     })
                 }
                 if (filterItem.filterItems.includes(priceConstant.above105)) {
                     newItemList.forEach(itemListItem => {
-                        if (parseInt(itemListItem.price) > 105) {
+                        if (parseFloat(itemListItem.price) > 105) {
                             arr.push(itemListItem)
                         }
                     })

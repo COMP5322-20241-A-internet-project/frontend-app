@@ -2,9 +2,10 @@ import { useLocation, Link } from "react-router-dom";
 import { useState, useRef, useEffect } from 'react'
 import { Box, Grid, Typography, Button, TextField } from '@mui/material'
 import Breadcrumb from "../components/Breadcrumb"
-import { cloneDeep } from "lodash"
+import { cloneDeep, first } from "lodash"
 import { useNavigate } from "react-router-dom";
 import { CreditCard } from "@mui/icons-material";
+import { locationStateConstant } from "../constants";
 
 export const breadcrumbs = [
     <Typography key="1" sx={{ color: 'black', fontSize: "1rem" }}>
@@ -74,6 +75,7 @@ const styles = {
 }
 
 export default function ShoppingCart() {
+    const location = useLocation()
     const navigate = useNavigate()
     const [geoAddress, setGeoAddress] = useState("")
     const [cartItems, setCartItem] = useState([])
@@ -88,6 +90,7 @@ export default function ShoppingCart() {
     const [expiryYear, setExpiryYear] = useState("")
     const [cvc, setCvc] = useState(null)
     const [error, setError] = useState({})
+    const [readyForSubmit, setReadyForSubmit] = useState(false)
     console.log("firstname", firstname)
     console.log("lastname", lastname)
     console.log("address1", address1)
@@ -191,7 +194,7 @@ export default function ShoppingCart() {
     }
 
     function validateForm() {
-        let newError = error
+        let newError = {}
         if (!validateCreditCard(creditCardNum)) {
             newError = { ...newError, creditCardNum: "error" }
         }
@@ -220,7 +223,73 @@ export default function ShoppingCart() {
             newError = { ...newError, cvc: "error" }
         }
         setError(newError)
+        if(JSON.stringify(newError) !== "{}"){
+            return false
+        } else {
+            return true
+        }
     }
+
+    function handleSubmit(){
+        console.log("suubmit")
+        const validated = validateForm()
+        console.log("validated", validated)
+        if(validated){
+            const jwtToken = localStorage.getItem("jwtToken")
+            console.log("jwtToken", jwtToken)
+            if(!jwtToken){
+                localStorage.setItem("orderInfo", JSON.stringify({
+                    firstname,
+                    lastname,
+                    address1,
+                    address2,
+                    nameOnCreditCard,
+                    creditCardNum,
+                    expiryMonth,
+                    expiryYear,
+                    cvc
+                }))
+                navigate("/signIn", {state: locationStateConstant.fromSubmitCart})
+            } else {
+                navigate("/finishOrder")
+                const jwtToken = localStorage.getItem("jwtToken")
+                // fetch("http://localhost:3000/orders", {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json', 'Authorization':` Bearer ${jwtToken}` },
+                //     body: JSON.stringify({ 
+                       
+                //     })
+                // })
+            }
+        }
+    }
+
+    useEffect(()=>{
+        if(location.state === locationStateConstant.returnFromSignIn){
+            let orderInfo = localStorage.getItem("orderInfo")
+            console.log("orderInfo",orderInfo)
+            if(orderInfo){
+                orderInfo = JSON.parse(orderInfo)
+                console.log("orderInfo", orderInfo)
+                setFirstname(orderInfo.firstname)
+                setLastname(orderInfo.lastname)
+                setAddress1(orderInfo.address1)
+                setAddress2(orderInfo.address2)
+                setNameOnCreditCard(orderInfo.nameOnCreditCard)
+                setCreditCardNum(orderInfo.creditCardNum)
+                setExpiryMonth(orderInfo.expiryMonth)
+                setExpiryYear(orderInfo.expiryYear)
+                setCvc(orderInfo.cvc)
+                setReadyForSubmit(true)
+            }
+        }
+    },[])
+
+    useEffect(()=>{
+        if(readyForSubmit){
+            handleSubmit()
+        }
+    },[readyForSubmit])
 
     return (
         <Box sx={styles.container}>
@@ -419,8 +488,7 @@ export default function ShoppingCart() {
                                 <button
                                     style={{ marginTop: "6px", background: "#00205b", color: "white", height: "50px", width: "100%", cursor: "pointer" }}
                                     onClick={() => {
-                                        setError({})
-                                        validateForm()
+                                        handleSubmit()
                                     }}
                                 >
                                     Submit
