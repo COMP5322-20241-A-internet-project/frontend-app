@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import FilterComponent from "../components/FilterComponent"
-import { Box, Grid, Link, Typography, Button } from '@mui/material'
+import { Box, Grid,Typography, Button } from '@mui/material'
 import Breadcrumb from "../components/Breadcrumb"
 import RabbitFood from "../assets/rabbitFood.jpg"
 import { priceConstant } from '../constants'
 import { useNavigate } from "react-router-dom";
+import { decodeJwt } from '../utils/utils';
 
 const foodItems = [
     {
@@ -135,7 +136,7 @@ const styles = {
 export default function Food() {
     const navigate = useNavigate();
     const [mobileFilerOpen, setMobileFilterOpen] = useState(false)
-    const [itemList, setItemList] = useState(foodItems)
+    const [itemList, setItemList] = useState([])
     const [filterItems, setFilterItem] = useState([])
     const handleCheckboxChange = (checkedItem) => {
         const arr = []
@@ -219,6 +220,44 @@ export default function Food() {
         }
     }
 
+    function convertKeysToLowerCase(obj) {
+        if (!obj || typeof obj !== 'object') {
+            return obj;
+        }
+    
+        const newObj = {};
+        Object.keys(obj).forEach(key => {
+            const newKey = key.toLowerCase();
+            newObj[newKey] = obj[key];
+        });
+    
+        return newObj;
+    }
+
+    useEffect(()=>{
+        fetch("http://localhost:3000/product")
+        .then(response=>response.json())
+        .then(data=>{
+            if(data){
+                for(let i = 0; i < data.length; i++){
+                    data[i] = convertKeysToLowerCase(data[i])
+                }
+                setItemList(data)
+            }
+        })
+    },[])
+
+    function handleAddToFav(productId){
+        const jwtToken = localStorage.getItem("jwtToken")
+        const result = decodeJwt(jwtToken)
+        fetch(`http://localhost:3000/user/${result.id}/favorite`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': ` Bearer ${jwtToken}` },
+            body: JSON.stringify({
+                productID: productId
+            })})
+    }
+
     return (
         <Box sx={styles.container}>
             <Breadcrumb breadcrumbsContent={breadcrumbs} />
@@ -240,7 +279,7 @@ export default function Food() {
                     <Grid container direction={"row"} spacing={2} sx={{ padding: "10px" }}>
                         {itemList.length > 0 && filterItemList(itemList).map((item, index) => (
                             <Grid key={`${item}-${index}`} item md={3} xs={12} sx={{ display: "flex", flexDirection: { md: "column", xs: "row" }, alignItems: { xs: "center", md: "flex-start" }, borderBottom: { xs: "1px solid rgb(204, 204, 204)", md: "none" }, paddingBottom: { xs: "15px", md: "unset" } }}>
-                                <Box onClick={() => navigate(`/product/${item.id}`, { state: { ...item } })} sx={{ width: { md: "100%" }, justifyContent: "center", display: "flex", cursor: "pointer" }}>
+                                <Box onClick={() => navigate(`/product/${item.id}`, { state: { ...item, title: item.name } })} sx={{ width: { md: "100%" }, justifyContent: "center", display: "flex", cursor: "pointer" }}>
                                     <Box sx={{
                                         width: "200px", height: "250px",
                                         "&.MuiBox-root": {
@@ -252,9 +291,9 @@ export default function Food() {
                                     </Box>
                                 </Box>
                                 <Box sx={{ borderTop: { md: "1px solid rgb(204, 204, 204)" }, marginTop: { md: "10px" }, paddingTop: "10px", marginBottom: "20px", flex: { xs: 1 }, width: { md: "100%" } }}>
-                                    <Box sx={{ cursor: "pointer" }} onClick={() => navigate(`/product/${item.id}`, { state: { ...item } })}>
+                                    <Box sx={{ cursor: "pointer" }} onClick={() => navigate(`/product/${item.id}`, { state: { ...item, title: item.name } })}>
                                         <Typography sx={{ fontWeight: "bold", marginBottom: "5px" }}>{item.brand}</Typography>
-                                        <Typography sx={{ marginBottom: "5px" }}>{item.title}</Typography>
+                                        <Typography sx={{ marginBottom: "5px" }}>{item.name}</Typography>
                                         <Typography sx={{ marginBottom: "5px" }}>{`HKD ${item.price}`}</Typography>
                                     </Box>
                                     <button onClick={(e) => {
@@ -262,14 +301,14 @@ export default function Food() {
                                         e.stopPropagation();
                                         addtoCart({
                                             id: item.id,
-                                            title: item.title,
+                                            title: item.name,
                                             category: item.category,
                                             price: item.price,
                                             brand: item.brand,
                                             img: item.img
                                         });
                                     }} style={styles.addToCartButton}>Add to Cart</button>
-                                    <button style={styles.addToFavButton}>Add to Favourite</button>
+                                    {localStorage.getItem("jwtToken") && <button style={styles.addToFavButton} onClick={()=> handleAddToFav(item.id)}>Add to Favourite</button>}
                                 </Box>
                             </Grid>
                         ))}

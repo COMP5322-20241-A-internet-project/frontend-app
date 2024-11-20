@@ -1,4 +1,3 @@
-import { Checkbox } from '@mui/material';
 import { useState, useEffect } from 'react'
 export default function CheckBox({ onCheckboxChange, reset }) {
     const [checked, setChecked] = useState(false)

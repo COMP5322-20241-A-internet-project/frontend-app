@@ -1,8 +1,8 @@
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from 'react';
 import { StateContext } from '../../StateProvider';
-import { decodeJwt } from '../../utils/utils';
+
 const styles = {
     accountMenuPopup: (theme) => {
         return {
@@ -43,15 +43,29 @@ const styles = {
 export default function AccountMenu({ setOpenAccountMenu }) {
     const navigate = useNavigate()
     const [loginName, setLoginName] = useState()
-    const { userName } = useContext(StateContext)
+    const { userName, setUserName } = useContext(StateContext)
     useEffect(() => {
         setLoginName(userName)
     }, [userName])
+
+    function handleLogout(){
+        localStorage.removeItem("jwtToken")
+        localStorage.removeItem("bunnybunnycart")
+        localStorage.removeItem("orderInfo")
+        setUserName(null)
+        navigate("/")
+    }
     return (
         <Box sx={styles.accountMenuPopup}>
             {loginName && <Typography variant='h5' style={{ marginBottom: "10px" }}>{`Hi, ${loginName}`}</Typography>}
-            <button style={styles.signInBtn} onClick={() => { setOpenAccountMenu(false); navigate("/signIn"); }}>Sign in </button>
-            <button style={styles.createAccountBtn} onClick={() => { setOpenAccountMenu(false); navigate("/createAccount"); }}>Create Account</button>
+            {!loginName && <>
+                <button style={styles.signInBtn} onClick={() => { setOpenAccountMenu(false); navigate("/signIn"); }}>Sign in </button>
+                <button style={styles.createAccountBtn} onClick={() => { setOpenAccountMenu(false); navigate("/createAccount"); }}>Create Account</button>
+            </>}
+            {loginName && <>
+                <button style={styles.signInBtn} onClick={() => { handleLogout();setOpenAccountMenu(false); }}>Logout</button>
+                <button style={styles.signInBtn} onClick={() => { setOpenAccountMenu(false); navigate("/favourite")}}>My Favourite</button>
+            </>}
         </Box>
     )
 }

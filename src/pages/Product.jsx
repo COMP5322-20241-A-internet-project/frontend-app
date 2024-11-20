@@ -1,8 +1,9 @@
 import { useLocation, Link } from "react-router-dom";
-import { useState, useRef } from 'react'
-import { Box, Grid, Typography, Button, TextField } from '@mui/material'
+import { useState, useRef, useEffect } from 'react'
+import { Box, Grid, Typography } from '@mui/material'
 import { breadcrumbs } from "./Food";
 import Breadcrumb from "../components/Breadcrumb"
+import { httpStatus } from "../constants";
 const styles = {
     container: {
         padding: "30px"
@@ -92,12 +93,46 @@ const styles = {
 export default function Product() {
     const { state } = useLocation()
     const reviewsRef = useRef(null)
+    const [reviews, setReviews] = useState([])
+    const [reviewInput, setReviewInput] = useState("")
+
+    useEffect(() => {
+        fetch(`http://localhost:3000/product/${state.id}/review`)
+            .then(response => response.json())
+            .then(data => {
+                if(date){
+                    setReviews(data[0].reviews)
+                }
+            })
+    }, [])
+
+    function handleSubmitReview() {
+        const jwtToken = localStorage.getItem("jwtToken")
+        fetch(`http://localhost:3000/product/${state.id}/review`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': ` Bearer ${jwtToken}` },
+            body: JSON.stringify({
+                userID: state.id,
+                comment: reviewInput
+            })
+        }).then(response => response.status)
+            .then(data => {
+                if (data === httpStatus.created) {
+                    fetch(`http://localhost:3000/product/${state.id}/review`)
+                        .then(response => response.json())
+                        .then(data => {
+                            setReviews(data[0].reviews)
+                        })
+                }
+            })
+    }
+
     return (
         <Box sx={styles.container}>
             <Grid container sx={{ maxWidth: "1800px" }}>
                 <Grid item md={12} lg={12}><Breadcrumb breadcrumbsContent={breadcrumbs} /></Grid>
                 <Grid item md={8} xs={12} sx={styles.productDiv} order={{ md: 2, sm: 3 }}>
-                    <Box style={{width:"100%", display:"flex", justifyContent:"center"}}>
+                    <Box style={{ width: "100%", display: "flex", justifyContent: "center" }}>
                         <Box sx={{
                             width: "400px", height: "450px",
                             display: { md: "block", sm: "none" },
@@ -121,7 +156,7 @@ export default function Product() {
                     </Box>
                     <Box ref={reviewsRef} sx={styles.reviewsDiv}>
                         <Typography variant="h5" gutterBottom>{"Reviews"}</Typography>
-                        {state.reviews.length > 0 && state.reviews.map((item, index) => (
+                        {reviews?.length > 0 && reviews?.map((item, index) => (
                             <Box sx={styles.reviews}>
                                 <Box key={`reviews-${index}`} sx={{ display: "flex", justifyContent: "space-between" }}>
                                     <Typography variant="h5">{item.username}</Typography>
@@ -130,13 +165,17 @@ export default function Product() {
                                 <Box><Typography variant="body1" gutterBottom>{item.comment}</Typography></Box>
                             </Box>
                         ))}
-                        <textarea
-                            placeholder="Type in reviews here..."
-                            style={styles.reviewsTextarea}
-                        />
-                        <Box sx={styles.submitBtn}>
-                            <button style={{ border: "none", background: "none", color: "white" }}>Submit</button>
-                        </Box>
+                        {localStorage.getItem("jwtToken") && <>
+                            <textarea
+                                placeholder="Type in reviews here..."
+                                style={styles.reviewsTextarea}
+                                onChange={(e) => setReviewInput(e.target.value)}
+                                value={reviewInput}
+                            />
+                            <Box sx={styles.submitBtn}>
+                                <button style={{ border: "none", background: "none", color: "white" }} onClick={() => handleSubmitReview()}>Submit</button>
+                            </Box>
+                        </>}
 
                     </Box>
                 </Grid>
@@ -157,7 +196,7 @@ export default function Product() {
                         <button
                             style={{ background: "none", border: "none", margin: 0, padding: 0 }}
                             onClick={() => reviewsRef.current.scrollIntoView({ behavior: 'smooth', block: "start" })}>
-                            <Typography sx={styles.reviewsText} variant="h5">{`${state.reviews.length} Reviews`}</Typography></button>
+                            <Typography sx={styles.reviewsText} variant="h5">{`${reviews.length} Reviews`}</Typography></button>
                     </Box>
                     <Box>
                         <Typography variant="h5" gutterBottom>Specifications</Typography>

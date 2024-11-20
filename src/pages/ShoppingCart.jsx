@@ -1,10 +1,8 @@
-import { useLocation, Link } from "react-router-dom";
-import { useState, useRef, useEffect } from 'react'
-import { Box, Grid, Typography, Button, TextField } from '@mui/material'
-import Breadcrumb from "../components/Breadcrumb"
-import { cloneDeep, first } from "lodash"
+import { useLocation } from "react-router-dom";
+import { useState, useEffect } from 'react'
+import { Box, Grid, Typography } from '@mui/material'
+import { cloneDeep } from "lodash"
 import { useNavigate } from "react-router-dom";
-import { CreditCard } from "@mui/icons-material";
 import { locationStateConstant } from "../constants";
 
 export const breadcrumbs = [
@@ -302,7 +300,7 @@ export default function ShoppingCart() {
                         </button>
 
                     </div> :
-                    <Grid item xs={12} md={12} lg={12} sx={{ display: "flex", justifyContent: "center", flexDirection: "row", maxWidth: "1800px", flexDirection: { xs: "column", md: "column", lg: "row" } }}>
+                    <Grid item xs={12} md={12} lg={12} sx={{ display: "flex", justifyContent: "center", maxWidth: "1800px", flexDirection: { xs: "column", md: "column", lg: "row" } }}>
                         <Grid item lg={4} md={12} xs={12} sx={styles.productDiv}>
                             <Box style={{ display: "flex", alignItems: "center" }}>
                                 <Typography variant="h5" gutterBottom>Items</Typography>
@@ -356,7 +354,7 @@ export default function ShoppingCart() {
                                 <Box style={{ border: "1px solid black", padding: "15px", background: "#b9d3f3" }}>
                                     <Box style={{ display: "flex", justifyContent: "space-between" }}>
                                         <Box style={{ display: "flex", flexDirection: "column", width: "49%" }}>
-                                            <label for="firstname">First Name</label>
+                                            <label htmlFor="firstname">First Name</label>
                                             <input
                                                 style={error.firstname && { border: "2px solid red" }}
                                                 type="text"
@@ -365,7 +363,7 @@ export default function ShoppingCart() {
                                             />
                                         </Box>
                                         <Box style={{ display: "flex", flexDirection: "column", width: "49%" }}>
-                                            <label for="lastname">Last Name</label>
+                                            <label htmlFor="lastname">Last Name</label>
                                             <input
                                                 style={error.lastname && { border: "2px solid red" }}
                                                 type="text"
@@ -376,7 +374,7 @@ export default function ShoppingCart() {
                                     </Box>
                                     <Box>
                                         <Box style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>
-                                            <label for="address1">Address</label>
+                                            <label htmlFor="address1">Address</label>
                                             <input
                                                 style={error.address1 && { border: "2px solid red" }}
                                                 type="text"
@@ -385,7 +383,7 @@ export default function ShoppingCart() {
                                             />
                                         </Box>
                                         <Box style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>
-                                            <label for="address2"></label>
+                                            <label htmlFor="address2"></label>
                                             <input
                                                 type="text"
                                                 value={address2}
@@ -398,7 +396,7 @@ export default function ShoppingCart() {
                                 <Box style={{ border: "1px solid black", padding: "15px", background: "#b9d3f3" }}>
                                     <Box>
                                         <Box style={{ display: "flex", flexDirection: "column" }}>
-                                            <label for="creditCard">Name on Credit Card</label>
+                                            <label htmlFor="creditCard">Name on Credit Card</label>
                                             <input
                                                 style={error.nameOnCreditCard && { border: "2px solid red" }}
                                                 type="text"
@@ -407,7 +405,7 @@ export default function ShoppingCart() {
                                             />
                                         </Box>
                                         <Box style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>
-                                            <label for="creditCard">Credit Card</label>
+                                            <label htmlFor="creditCard">Credit Card</label>
                                             <input
                                                 style={error.creditCardNum && { border: "2px solid red" }}
                                                 type="number"
@@ -417,7 +415,7 @@ export default function ShoppingCart() {
                                         </Box>
                                         <Box style={{ display: "flex" }}>
                                             <Box style={{ display: "flex", flexDirection: "column", marginTop: "20px", marginRight: "3px" }}>
-                                                <label for="creditCard">Expiry Date</label>
+                                                <label htmlFor="creditCard">Expiry Date</label>
                                                 <Box style={{ display: "flex" }}>
                                                     <input
                                                         style={{ width: "40px", marginRight: "5px", border: error.expiryMonth && "2px solid red" }}
@@ -458,7 +456,7 @@ export default function ShoppingCart() {
                                                 </Box>
                                             </Box>
                                             <Box style={{ display: "flex", flexDirection: "column", marginTop: "20px", marginLeft: "20px" }}>
-                                                <label for="creditCard">CVC</label>
+                                                <label htmlFor="creditCard">CVC</label>
                                                 <Box style={{ display: "flex" }}>
                                                     <input
                                                         style={{ width: "40px", border: error.cvc && "2px solid red" }}

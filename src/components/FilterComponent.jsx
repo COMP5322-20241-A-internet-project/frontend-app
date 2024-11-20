@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Box, Grid, Checkbox } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { cloneDeep } from "lodash"
 import { priceConstant } from "../constants"

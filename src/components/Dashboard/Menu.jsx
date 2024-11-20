@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Box, Grid, Typography } from '@mui/material';
-import zIndex from '@mui/material/styles/zIndex';
+import { useState } from 'react'
+import { Box, Typography } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ImgFoodNTreat from "../../assets/foodNtreat.jpg"

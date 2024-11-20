@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Grid, Link, Typography, Button } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import "./home.css"
 const styles = {
   container: {
