@@ -399,7 +399,7 @@ export default function ShoppingCart() {
                                 </Box>
                                 <Box>
                                     <Box style={{ display: "flex", flexDirection: "row", marginTop: "20px", alignItems: "center" }}>
-                                        <label htmlFor="discount" style={{ marginRight: "10px" }}>Discount Code</label>
+                                        <label htmlFor="discount" style={{ marginRight: "10px", fontSize: "22px" }}>Discount Code</label>
                                         <input
                                             type="text"
                                             value={discountCode}
