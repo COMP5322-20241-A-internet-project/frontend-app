@@ -89,6 +89,7 @@ export default function ShoppingCart() {
     const [cvc, setCvc] = useState(null)
     const [error, setError] = useState({})
     const [readyForSubmit, setReadyForSubmit] = useState(false)
+    const [discountCode, setDiscountCode] = useState()
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
@@ -241,7 +242,7 @@ export default function ShoppingCart() {
                 bunnybunnycart = JSON.parse(bunnybunnycart)
                 const productOrders = {}
                 bunnybunnycart.forEach((order) => {
-                    return productOrders[order.id]= order.quantity
+                    return productOrders[order.id] = order.quantity
                 })
                 fetch("http://localhost:3000/orders", {
                     method: 'POST',
@@ -255,14 +256,14 @@ export default function ShoppingCart() {
                         lastname: lastname
                     })
                 })
-                .then(response=>response.status)
-                .then(data=>{
-                    if(data === httpStatus.created){
-                        localStorage.removeItem("bunnybunnycart")
-                        localStorage.removeItem("orderInfo")
-                        navigate("/finishOrder")
-                    }
-                })
+                    .then(response => response.status)
+                    .then(data => {
+                        if (data === httpStatus.created) {
+                            localStorage.removeItem("bunnybunnycart")
+                            localStorage.removeItem("orderInfo")
+                            navigate("/finishOrder")
+                        }
+                    })
             }
         }
     }
@@ -291,6 +292,11 @@ export default function ShoppingCart() {
         }
     }, [readyForSubmit])
 
+    function handleDiscountCode() {
+        if (totalPrice > 0 && discountCode === "CHRIS2024") {
+            setTotalPrice((totalPrice * 0.7).toFixed(1))
+        }
+    }
     return (
         <Box sx={styles.container}>
             <Grid container>
@@ -389,6 +395,17 @@ export default function ShoppingCart() {
                                                 onChange={(e) => { setError({ ...error, address1: null }); setAddress1(e.target.value.trim()) }}
                                             />
                                         </Box>
+                                    </Box>
+                                </Box>
+                                <Box>
+                                    <Box style={{ display: "flex", flexDirection: "row", marginTop: "20px", alignItems: "center" }}>
+                                        <label htmlFor="discount" style={{ marginRight: "10px" }}>Discount Code</label>
+                                        <input
+                                            type="text"
+                                            value={discountCode}
+                                            onChange={(e) => { setDiscountCode(e.target.value.trim()) }}
+                                        />
+                                        <button style={{ marginLeft: "10px", background: "#00205B", color: "white" }} onClick={() => handleDiscountCode()}>Apply</button>
                                     </Box>
                                 </Box>
                                 <Typography variant="h6" style={{ marginBottom: "10px", marginTop: "3px" }}>Credit Card Infoamtion</Typography>
