@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react'
 import { Box, Grid, Typography } from '@mui/material'
 import { cloneDeep } from "lodash"
 import { useNavigate } from "react-router-dom";
-import { locationStateConstant } from "../constants";
+import { httpStatus, locationStateConstant } from "../constants";
+import { decodeJwt } from '../utils/utils';
 
 export const breadcrumbs = [
     <Typography key="1" sx={{ color: 'black', fontSize: "1rem" }}>
@@ -80,8 +81,7 @@ export default function ShoppingCart() {
     const [totalPrice, setTotalPrice] = useState(0)
     const [firstname, setFirstname] = useState("")
     const [lastname, setLastname] = useState("")
-    const [address1, setAddress1] = useState("")
-    const [address2, setAddress2] = useState("")
+    const [address1, setAddress1] = useState("Hong Kong Polytechnic University, Hung Hom, Kowloon, Hong Kong")
     const [nameOnCreditCard, setNameOnCreditCard] = useState("")
     const [creditCardNum, setCreditCardNum] = useState("")
     const [expiryMonth, setExpiryMonth] = useState("")
@@ -89,15 +89,6 @@ export default function ShoppingCart() {
     const [cvc, setCvc] = useState(null)
     const [error, setError] = useState({})
     const [readyForSubmit, setReadyForSubmit] = useState(false)
-    console.log("firstname", firstname)
-    console.log("lastname", lastname)
-    console.log("address1", address1)
-    console.log("address2", address2)
-    console.log("nameOnCreditCard", nameOnCreditCard)
-    console.log("creditCardNum", creditCardNum)
-    console.log("expiryMonth", expiryMonth)
-    console.log("expiryYear", expiryYear)
-    console.log("cvc", cvc)
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
@@ -221,53 +212,69 @@ export default function ShoppingCart() {
             newError = { ...newError, cvc: "error" }
         }
         setError(newError)
-        if(JSON.stringify(newError) !== "{}"){
+        if (JSON.stringify(newError) !== "{}") {
             return false
         } else {
             return true
         }
     }
 
-    function handleSubmit(){
+    function handleSubmit() {
         const validated = validateForm()
-        if(validated){
+        if (validated) {
             const jwtToken = localStorage.getItem("jwtToken")
-            if(!jwtToken){
+            if (!jwtToken) {
                 localStorage.setItem("orderInfo", JSON.stringify({
                     firstname,
                     lastname,
                     address1,
-                    address2,
                     nameOnCreditCard,
                     creditCardNum,
                     expiryMonth,
                     expiryYear,
                     cvc
                 }))
-                navigate("/signIn", {state: locationStateConstant.fromSubmitCart})
+                navigate("/signIn", { state: locationStateConstant.fromSubmitCart })
             } else {
-                navigate("/finishOrder")
-                const jwtToken = localStorage.getItem("jwtToken")
-                // fetch("http://localhost:3000/orders", {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json', 'Authorization':` Bearer ${jwtToken}` },
-                //     body: JSON.stringify({ 
-                       
-                //     })
-                // })
+                const result = decodeJwt(jwtToken)
+                let bunnybunnycart = localStorage.getItem("bunnybunnycart")
+                bunnybunnycart = JSON.parse(bunnybunnycart)
+                const productOrders = {}
+                bunnybunnycart.forEach((order) => {
+                    return productOrders[order.id]= order.quantity
+                })
+                fetch("http://localhost:3000/orders", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': ` Bearer ${jwtToken}` },
+                    body: JSON.stringify({
+                        userID: result.id,
+                        productOrders: JSON.stringify(productOrders),
+                        totalPrice: totalPrice,
+                        address: address1,
+                        firstname: firstname,
+                        lastname: lastname
+                    })
+                })
+                .then(response=>response.status)
+                .then(data=>{
+                    if(data === httpStatus.created){
+                        localStorage.removeItem("bunnybunnycart")
+                        localStorage.removeItem("orderInfo")
+                        navigate("/finishOrder")
+                    }
+                })
             }
         }
     }
 
-    useEffect(()=>{
-        if(location.state === locationStateConstant.returnFromSignIn){
+    useEffect(() => {
+        if (location.state === locationStateConstant.returnFromSignIn) {
             let orderInfo = localStorage.getItem("orderInfo")
-            if(orderInfo){
+            if (orderInfo) {
                 orderInfo = JSON.parse(orderInfo)
                 setFirstname(orderInfo.firstname)
                 setLastname(orderInfo.lastname)
                 setAddress1(orderInfo.address1)
-                setAddress2(orderInfo.address2)
                 setNameOnCreditCard(orderInfo.nameOnCreditCard)
                 setCreditCardNum(orderInfo.creditCardNum)
                 setExpiryMonth(orderInfo.expiryMonth)
@@ -276,13 +283,13 @@ export default function ShoppingCart() {
                 setReadyForSubmit(true)
             }
         }
-    },[])
+    }, [])
 
-    useEffect(()=>{
-        if(readyForSubmit){
+    useEffect(() => {
+        if (readyForSubmit) {
             handleSubmit()
         }
-    },[readyForSubmit])
+    }, [readyForSubmit])
 
     return (
         <Box sx={styles.container}>
@@ -304,7 +311,7 @@ export default function ShoppingCart() {
                         <Grid item lg={4} md={12} xs={12} sx={styles.productDiv}>
                             <Box style={{ display: "flex", alignItems: "center" }}>
                                 <Typography variant="h5" gutterBottom>Items</Typography>
-                                <Typography style={{ color: "red", fontSize: "1rem", marginLeft:"20px" }} gutterBottom>{error.cart}</Typography>
+                                <Typography style={{ color: "red", fontSize: "1rem", marginLeft: "20px" }} gutterBottom>{error.cart}</Typography>
                             </Box>
                             <div style={{ overflowY: "scroll", height: "508px" }}>
                                 {cartItems?.length > 0 && cartItems.map((cartItem, index) => (
@@ -380,14 +387,6 @@ export default function ShoppingCart() {
                                                 type="text"
                                                 value={address1}
                                                 onChange={(e) => { setError({ ...error, address1: null }); setAddress1(e.target.value.trim()) }}
-                                            />
-                                        </Box>
-                                        <Box style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>
-                                            <label htmlFor="address2"></label>
-                                            <input
-                                                type="text"
-                                                value={address2}
-                                                onChange={(e) => setAddress2(e.target.value.trim())}
                                             />
                                         </Box>
                                     </Box>
