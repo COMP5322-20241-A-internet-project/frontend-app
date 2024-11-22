@@ -319,7 +319,7 @@ export default function ShoppingCart() {
                                 <Typography variant="h5" gutterBottom>Items</Typography>
                                 <Typography style={{ color: "red", fontSize: "1rem", marginLeft: "20px" }} gutterBottom>{error.cart}</Typography>
                             </Box>
-                            <div style={{ overflowY: "scroll", height: "508px" }}>
+                            <div style={{ overflowY: "scroll", height: "511px" }}>
                                 {cartItems?.length > 0 && cartItems.map((cartItem, index) => (
                                     <div style={{ display: "flex", marginRight: "15px" }}>
                                         <Box sx={{
@@ -361,7 +361,7 @@ export default function ShoppingCart() {
                         </Grid>
                         <Grid item lg={4} md={12} xs={12}>
                             <Box></Box>
-                            <Box style={{ marginLeft: "10px" }}>
+                            <Box sx={{ marginLeft: "10px", marginTop: { xs: "30px", md: 0 } }}>
                                 <Typography variant="h5" gutterBottom>{`Order Total: HKD ${totalPrice}`}</Typography>
                                 <Typography variant="h6" style={{ marginBottom: "8px" }}>Delivery Infoamtion</Typography>
                                 <Box style={{ border: "1px solid black", padding: "15px", background: "#b9d3f3" }}>
