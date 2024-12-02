@@ -12,7 +12,8 @@ const styles = {
         justifyContent: "center",
         alignItems: "center",
         height: "calc(100vh - 135px)",
-        flexDirection: "column"
+        flexDirection: "column",
+        marginTop: { md: "150px", xs: "100px" }
     },
     button: {
         width: "400px",
@@ -62,7 +63,7 @@ export default function CreateAccount() {
     }
     return (
         <Grid sx={styles.container}>
-            <Box style={{ display: "flex" }}>
+            <Box sx={{ display: "flex", flexDirection: { md: "row", xs: "column" } }}>
                 <Box style={{ marginRight: "10px" }}>
                     <Typography variant='h6'>First Name</Typography>
                     <input
@@ -85,17 +86,17 @@ export default function CreateAccount() {
                     />
                 </Box>
             </Box>
-            <Box>
+            <Box sx={{ maxWidth: "810px", minWidth: "400px", width: "100%" }}>
                 <Typography variant='h6'>Address</Typography>
                 <input
                     type="text"
                     placeholder="Address"
-                    style={{ marginBottom: "30px", height: "60px", width: "810px" }}
+                    style={{ marginBottom: "30px", height: "60px", width: "100%" }}
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                 />
             </Box>
-            <Box style={{ display: "flex" }}>
+            <Box sx={{ display: "flex", flexDirection: { md: "row", xs: "column" } }}>
                 <Box>
                     <Typography variant='h6'>Email</Typography>
                     <input
@@ -117,7 +118,7 @@ export default function CreateAccount() {
                     />
                 </Box>
             </Box>
-            <Box style={{ display: "flex" }}>
+            <Box sx={{ display: "flex", flexDirection: { md: "row", xs: "column" } }}>
                 <Box>
                     <Typography variant='h6'>Username</Typography>
                     <input
