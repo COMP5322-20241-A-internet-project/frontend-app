@@ -100,7 +100,7 @@ export default function Product() {
         fetch(`http://localhost:3000/product/${state.id}/review`)
             .then(response => response.json())
             .then(data => {
-                if(date){
+                if(data){
                     setReviews(data[0].reviews)
                 }
             })
