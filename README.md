@@ -1,7 +1,5 @@
-# React + Vite
+# RabbitSuppliesStore-Frontend
 
-Install
-nom install
+Install packages: npm install
 
-Start project
-npm start
+Start server: npm start
