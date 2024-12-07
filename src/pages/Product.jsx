@@ -180,7 +180,7 @@ export default function Product() {
                     </Box>
                 </Grid>
                 <Grid item md={4} xs={12} order={{ md: 3, sm: 2 }}>
-                    <Box sx={{ width: "100%", alignItems: "center", justifyContent: "center", display: "flex" }}>
+                    <Box sx={{ width: "100%", alignItems: "center", justifyContent: "center", display: {md:"flex", xs:"none"} }}>
                         <Box sx={{
                             width: "400px", height: "450px",
                             display: { md: "none", sm: "block" },
@@ -217,7 +217,7 @@ export default function Product() {
                             <Typography variant="h6" gutterBottom>{state.weight}</Typography>
                         </Box>
                         <button style={styles.addToCartButton}>Add to Cart</button>
-                        <button style={styles.addToFavBtn}>Add to Favourite</button>
+                        {localStorage.getItem("jwtToken") && <button style={styles.addToFavBtn}>Add to Favourite</button>}
                     </Box>
 
                 </Grid>
