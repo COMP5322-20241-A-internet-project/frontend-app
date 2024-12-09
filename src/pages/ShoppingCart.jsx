@@ -76,7 +76,6 @@ const styles = {
 export default function ShoppingCart() {
     const location = useLocation()
     const navigate = useNavigate()
-    const [geoAddress, setGeoAddress] = useState("")
     const [cartItems, setCartItem] = useState([])
     const [totalPrice, setTotalPrice] = useState(0)
     const [firstname, setFirstname] = useState("")
@@ -86,7 +85,7 @@ export default function ShoppingCart() {
     const [creditCardNum, setCreditCardNum] = useState("")
     const [expiryMonth, setExpiryMonth] = useState("")
     const [expiryYear, setExpiryYear] = useState("")
-    const [cvc, setCvc] = useState(null)
+    const [cvc, setCvc] = useState("")
     const [error, setError] = useState({})
     const [readyForSubmit, setReadyForSubmit] = useState(false)
     const [discountCode, setDiscountCode] = useState()
@@ -97,13 +96,15 @@ export default function ShoppingCart() {
     } else {
         alert("Geolocation is not supported by this browser.")
     }
+    console.log("import.meta.env", import.meta.env.VITE_GOOGLE_GEOLOCATION_API_KEY)
 
     function showPosition(position) {
-        fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&sensor=false&language=en&key=${""}`)
+        fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&sensor=false&language=en&key=${import.meta.env.VITE_GOOGLE_GEOLOCATION_API_KEY}`)
             .then(response => response.json())
             .then(json => {
-                setGeoAddress(json?.results?.[0].formatted_address)
-                console.log(json?.results?.[0].formatted_address)
+                if(json?.results?.[0]?.formatted_address){
+                    setAddress1(json?.results?.[0].formatted_address)
+                }
             })
             .catch(err => console.log('Request Failed', err));
     }
@@ -321,7 +322,7 @@ export default function ShoppingCart() {
                             </Box>
                             <div style={{ overflowY: "scroll", height: "511px" }}>
                                 {cartItems?.length > 0 && cartItems.map((cartItem, index) => (
-                                    <div style={{ display: "flex", marginRight: "15px" }}>
+                                    <div key={"shopping-cart-"+index} style={{ display: "flex", marginRight: "15px" }}>
                                         <Box sx={{
                                             width: "200px", height: "250px",
                                             "&.MuiBox-root": {
