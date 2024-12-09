@@ -96,7 +96,6 @@ export default function ShoppingCart() {
     } else {
         alert("Geolocation is not supported by this browser.")
     }
-    console.log("import.meta.env", import.meta.env.VITE_GOOGLE_GEOLOCATION_API_KEY)
 
     function showPosition(position) {
         fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&sensor=false&language=en&key=${import.meta.env.VITE_GOOGLE_GEOLOCATION_API_KEY}`)
