@@ -125,6 +125,7 @@ export default function Product() {
                         })
                 }
             })
+            setReviewInput("")
     }
 
     return (

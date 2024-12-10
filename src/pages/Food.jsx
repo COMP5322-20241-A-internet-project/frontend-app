@@ -255,7 +255,15 @@ export default function Food() {
             headers: { 'Content-Type': 'application/json', 'Authorization': ` Bearer ${jwtToken}` },
             body: JSON.stringify({
                 productID: productId
-            })})
+            })}
+        ).then(response => {
+            console.log(response.status)
+            if (response.status === 201) {
+                alert("Added to favourite")
+            } else {
+                alert("You have added to favourite")
+            }
+        })
     }
 
     return (
