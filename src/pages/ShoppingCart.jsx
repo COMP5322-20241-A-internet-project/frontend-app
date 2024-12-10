@@ -80,7 +80,7 @@ export default function ShoppingCart() {
     const [totalPrice, setTotalPrice] = useState(0)
     const [firstname, setFirstname] = useState("")
     const [lastname, setLastname] = useState("")
-    const [address1, setAddress1] = useState("Hong Kong Polytechnic University, Hung Hom, Kowloon, Hong Kong")
+    const [address1, setAddress1] = useState("")
     const [nameOnCreditCard, setNameOnCreditCard] = useState("")
     const [creditCardNum, setCreditCardNum] = useState("")
     const [expiryMonth, setExpiryMonth] = useState("")

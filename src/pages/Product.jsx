@@ -158,8 +158,8 @@ export default function Product() {
                     <Box ref={reviewsRef} sx={styles.reviewsDiv}>
                         <Typography variant="h5" gutterBottom>{"Reviews"}</Typography>
                         {reviews?.length > 0 && reviews?.map((item, index) => (
-                            <Box sx={styles.reviews}>
-                                <Box key={`reviews-${index}`} sx={{ display: "flex", justifyContent: "space-between" }}>
+                            <Box key={`reviews-comment-${index}`} sx={styles.reviews}>
+                                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                                     <Typography variant="h5">{item.username}</Typography>
                                     <Typography variant="body1">{item.date}</Typography>
                                 </Box>

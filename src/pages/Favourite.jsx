@@ -61,9 +61,9 @@ export default function Favourite() {
                 <Box>
                     <Typography variant='h3'>It is Empty</Typography>
                 </Box>}
-            {fav.length > 0 && fav.map(favourite => (
+            {fav.length > 0 && fav.map((favourite, index) => (
                 <>
-                    <Box style={{ display: "flex", alignItems: "center" }}>
+                    <Box key={`favourite-${index}`} style={{ display: "flex", alignItems: "center" }}>
                         <Box sx={{
                             width: "100px", height: "150px",
                             "&.MuiBox-root": {
